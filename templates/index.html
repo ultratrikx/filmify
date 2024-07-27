@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>filmify</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            margin: 10px 0;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        img {
+            border-radius: 10px;
+            margin: 10px;
+        }
+        .image {
+            max-width: 200px;
+            height: auto;
+        }
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .label {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #333;
+        }
+        .download-button {
+            margin-left: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .download-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        Processing images, please wait...
+    </div>
+
+    <h1>Upload an Image</h1>
+    <form id="uploadForm" method="POST" action="/" enctype="multipart/form-data">
+        <input type="file" name="file" class="download-button">
+        <input type="submit" value="Upload" class="download-button">
+    </form>
+
+    {% if filename %}
+        <h2>Uploaded Image:</h2>
+        <div class="grid-item">
+            <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Image" class="image">
+            <div class="label">
+                Original
+                <a href="{{ url_for('uploaded_file', filename=filename) }}" download>
+                    <button class="download-button">Download</button>
+                </a>
+            </div>
+        </div>
+        <h2>Processed Images:</h2>
+        <div class="grid">
+            {% for output_file, label in output_files_with_labels %}
+                <div class="grid-item">
+                    <img src="{{ url_for('uploaded_file', filename=output_file) }}" alt="Output Image" class="image">
+                    <div class="label">
+                        {{ label }}
+                        <a href="{{ url_for('uploaded_file', filename=output_file) }}" download>
+                            <button class="download-button">Download</button>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            document.getElementById('loading').style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
